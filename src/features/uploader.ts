@@ -4,7 +4,12 @@ import * as FormData from "form-data";
 
 const feature1 = async (app: App) => {
     app.message("", async ({ message, say }) => {
-        if (message.subtype !== "file_share") return;
+        if (
+            message.subtype !== "file_share" ||
+            message.channel !== "C02T3CU03T3"
+        )
+            // only listen for messages in #emojibot
+            return;
         if (!message.files || message.files.length === 0) {
             say("Make sure to send a file");
             return;
