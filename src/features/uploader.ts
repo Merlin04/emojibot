@@ -1,12 +1,12 @@
 import { App } from "@slack/bolt";
 import fetch from "node-fetch";
 import * as FormData from "form-data";
-
+import config from "../config";
 const feature1 = async (app: App) => {
     app.message("", async ({ message, say }) => {
         if (
             message.subtype !== "file_share" ||
-            message.channel !== "C02T3CU03T3"
+            message.channel !== config.channel
         )
             // only listen for messages in #emojibot
             return;
@@ -43,31 +43,16 @@ const feature1 = async (app: App) => {
 
         // No idea how much of this is necessary but I don't feel like figuring it out
         const res = await fetch("https://hackclub.slack.com/api/emoji.add", {
-            credentials: "include",
+            // credentials: "include",
             method: "POST",
-            mode: "cors",
+            // mode: "cors",
             headers: {
-                "User-Agent":
-                    "Mozilla/5.0 (Windows NT 11.0; WOW64; x64; rv:93.0esr) Gecko/20010101 Firefox/93.0esr/Yp6557blmseFJz",
-                Accept: "*/*",
-                "Accept-Language": "en-US,en;q=0.5",
-                "Sec-Fetch-Dest": "empty",
-                "Sec-Fetch-Mode": "cors",
-                "Sec-Fetch-Site": "same-site",
-                "Sec-GPC": "1",
-                Pragma: "no-cache",
-                "Cache-Control": "no-cache",
-                Cookie: process.env.SLACK_COOKIE,
-                TE: "trailers",
-                Origin: "https://app.slack.com",
-                Host: "hackclub.slack.com",
-                DNT: "1",
-                Connection: "keep-alive",
+                ...config.reqHeaders,
                 "Content-Length": form.getLengthSync().toString(),
                 ...form.getHeaders(),
             },
             body: form.getBuffer(),
-        }).then((res) => res.json());
+        }).then((res) => res.json() as Promise<{ ok: boolean }>);
         say({
             text: res.ok
                 ? `:${emojiName}: has been added, thanks <@${message.user}>!`
