@@ -9,18 +9,15 @@ async function deleteEmoji(emojiName: string, user: string) {
     form.append("_x_mode", "online");
     form.append("name", emojiName);
     form.append("token", process.env.SLACK_BOT_USER_TOKEN);
-    const res = await fetch(
-        "https://hackclub.slack.com/api/emoji.remove",
-        {
-            method: "POST",
-            headers: {
-                ...config.reqHeaders,
-                "Content-Length": form.getLengthSync().toString(),
-                ...form.getHeaders(),
-            },
-            body: form.getBuffer(),
-        }
-    ).then((res) => res.json() as Promise<{ ok: boolean }>);
+    const res = await fetch("https://hackclub.slack.com/api/emoji.remove", {
+        method: "POST",
+        headers: {
+            ...config.reqHeaders,
+            "Content-Length": form.getLengthSync().toString(),
+            ...form.getHeaders(),
+        },
+        body: form.getBuffer(),
+    }).then((res) => res.json() as Promise<{ ok: boolean }>);
     return res.ok
         ? `:${emojiName}: has been removed, thanks <@${user}>!`
         : `Failed to remove emoji:
@@ -32,7 +29,6 @@ ${JSON.stringify(res, null, 4)}
 const feature3 = async (app: App) => {
     app.view("delete_view", async ({ client, ack, view }) => {
         await ack();
-        console.log("sususususssdfdssf");
         const meta = JSON.parse(view.private_metadata) as {
             emoji: string;
             thread_ts: string;
