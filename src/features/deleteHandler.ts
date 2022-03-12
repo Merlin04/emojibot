@@ -10,7 +10,7 @@ async function deleteEmoji(emojiName: string, user: string) {
     form.append("name", emojiName);
     form.append("token", process.env.SLACK_BOT_USER_TOKEN);
     const res = await fetch(
-        "https://hackclub.slack.com/api/emoji.remove?_x_id=9791fced-1647058806.077&slack_route=T0266FRGM&_x_version_ts=no-version&fp=a3",
+        "https://hackclub.slack.com/api/emoji.remove",
         {
             method: "POST",
             headers: {
