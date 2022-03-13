@@ -81,8 +81,8 @@ const feature2 = async (app: App) => {
             }
 
             if (
-                shortcut.user.id !== shortcut.message.user ||
-                config.admins.includes(shortcut.user.id)
+                shortcut.user.id !== shortcut.message.user &&
+                !config.admins.includes(shortcut.user.id)
             ) {
                 await client.views.open({
                     trigger_id: shortcut.trigger_id,
