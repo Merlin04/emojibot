@@ -22,8 +22,8 @@ const feature1 = async (app: App) => {
         form.append("mode", "data");
         const emojiName =
             message.text.startsWith(":") && message.text.endsWith(":")
-                ? message.text.slice(1, -1)
-                : message.text;
+                ? message.text.slice(1, -1).toLowerCase();
+                : message.text.toLowerCase();
         form.append("name", emojiName);
         const imgBuffer = await fetch(message.files[0].url_private, {
             headers: {
