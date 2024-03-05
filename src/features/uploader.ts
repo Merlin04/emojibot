@@ -14,6 +14,10 @@ const feature1 = async (app: App) => {
             say("Make sure to send a file");
             return;
         }
+        if (message.text.length > 100) {
+            say("Please keep your message under 100 characters.");
+            return;
+        }
         // const res = await app.client.admin.emoji.add({
         // 	name: message.text.startsWith(":") && message.text.endsWith(":") ? message.text.slice(1, -1) : message.text,
         // 	url: message.files[0].url_private
