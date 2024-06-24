@@ -1,5 +1,6 @@
 import { App, View } from "@slack/bolt";
 import config from "../config";
+import { SlackApp } from "slack-edge";
 
 function deleteView(emoji: string, thread_ts: string, user: string): View {
     return {
@@ -63,7 +64,11 @@ function errorView(reason: string): View {
     };
 }
 
-const feature2 = async (app: App) => {
+const feature2 = async (app: SlackApp<{
+    SLACK_SIGNING_SECRET: string;
+    SLACK_BOT_TOKEN: string;
+    SLACK_APP_TOKEN: string;
+}>) => {
     app.shortcut(
         { callback_id: "delete_emoji", type: "message_action" },
         async ({ shortcut, ack, client }) => {
@@ -95,7 +100,7 @@ const feature2 = async (app: App) => {
 
             const emojiName =
                 shortcut.message.text.startsWith(":") &&
-                shortcut.message.text.endsWith(":")
+                    shortcut.message.text.endsWith(":")
                     ? shortcut.message.text.slice(1, -1)
                     : shortcut.message.text;
 

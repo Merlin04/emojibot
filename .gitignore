@@ -117,3 +117,5 @@ dist
 .pnp.*
 
 .DS_STORE
+
+tmp
