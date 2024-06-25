@@ -1,13 +1,12 @@
-# Emojibot
+# Emojibot <!-- omit in toc -->
 
-- [Emojibot](#emojibot)
-  - [Usage](#usage)
-    - [Environment variables:](#environment-variables)
-      - [Getting the slack user token and cookie](#getting-the-slack-user-token-and-cookie)
-    - [Slack App Manifest:](#slack-app-manifest)
-    - [Running the bot](#running-the-bot)
-  - [License](#license)
-  - [Author](#author)
+- [Usage](#usage)
+  - [Environment variables:](#environment-variables)
+    - [Getting the slack user token and cookie](#getting-the-slack-user-token-and-cookie)
+  - [Slack App Manifest:](#slack-app-manifest)
+  - [Running the bot](#running-the-bot)
+- [License](#license)
+- [Author](#author)
 
 Simple slack bot to add emoji to your workspace when a user posts a message in a channel with an image and emoji name.
 
