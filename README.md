@@ -5,6 +5,7 @@
     - [Getting the slack user token and cookie](#getting-the-slack-user-token-and-cookie)
   - [Slack App Manifest:](#slack-app-manifest)
   - [Running the bot](#running-the-bot)
+- [Docker github action](#docker-github-action)
 - [License](#license)
 - [Author](#author)
 
@@ -85,6 +86,12 @@ settings:
 there are two ways to run the bot:
 a) through bun by running `bun run src/index.ts` and having a `.env` file in the root directory with the environment variables above or
 b) through docker with the prebuilt image kcoderhtml/emojibot:latest and the environment variables above in a docker-compose.yaml as shown [here](docker-compose.yaml)
+
+## Docker github action
+The docker image is built and pushed to dockerhub on every new release. The github action can be found [here](.github/workflows/publish-docker-image.yaml) and it needs the following secrets:
+- DOCKERHUB_USERNAME
+- DOCKERHUB_TOKEN
+![secrets](.github/images/repo-secrets.png)
 
 ## License
 MIT
