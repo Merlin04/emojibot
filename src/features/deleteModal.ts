@@ -73,7 +73,7 @@ const feature2 = async (
 ) => {
     app.shortcut(
         "delete_emoji",
-        async () => {},
+        async () => { },
         async ({ context, payload, body }) => {
             if (context.channelId !== config.channel) {
                 await context.client.views.open({
@@ -85,9 +85,14 @@ const feature2 = async (
                 return;
             }
 
+            // check if the user is a workspace admin
+            const isAdmin = await app.client.users.info({
+                user: body.user.id,
+            }).then((res) => res.user?.is_admin);
+
             if (
                 body.user.id !== body.message.user &&
-                !config.admins.includes(body.user.id)
+                !config.admins.includes(body.user.id) && !isAdmin
             ) {
                 await context.client.views.open({
                     trigger_id: payload.trigger_id,
@@ -100,7 +105,7 @@ const feature2 = async (
 
             const emojiName =
                 body.message.text.startsWith(":") &&
-                body.message.text.endsWith(":")
+                    body.message.text.endsWith(":")
                     ? body.message.text.slice(1, -1)
                     : body.message.text;
 
