@@ -17,4 +17,4 @@ RUN chown -R bun:bun .
 # run the app
 USER bun
 EXPOSE 4221/tcp
-ENTRYPOINT [ "./scaffoldServer" ]
+ENTRYPOINT [ "./emojibot" ]
