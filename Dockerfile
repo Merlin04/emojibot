@@ -5,13 +5,13 @@ WORKDIR /usr/src/app
 
 # install with --production (exclude devDependencies)
 FROM base AS build
-RUN mkdir -p /temp/prod
+RUN mkdir -p /temp/emojibot-prod
 COPY . /temp/prod/
 RUN cd /temp/prod && bun install --frozen-lockfile --production && bun run build
 
 # copy production build to release image
 FROM base AS release
-COPY --from=build /temp/prod/emojibot .
+COPY --from=build /temp/emojibot-prod/ .
 RUN chown -R bun:bun .
 
 # run the app
