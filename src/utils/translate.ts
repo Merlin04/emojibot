@@ -1,4 +1,5 @@
-export function humanizeSlackError(error: { ok: boolean; error: string }) {
+export function humanizeSlackError(error: { ok: boolean; error?: string }) {
+    if (!error.error) return "Unknown error";
     //    make a switch statement for the error codes
     switch (error.error) {
         case 'emoji_not_found':
