@@ -6,7 +6,7 @@ const app = new SlackApp({
         SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET!,
         SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN!,
         SLACK_APP_TOKEN: process.env.SLACK_APP_TOKEN!,
-    }
+    },
 });
 
 for (const [feature, handler] of Object.entries(features)) {
