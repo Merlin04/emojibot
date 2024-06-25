@@ -54,7 +54,7 @@ const feature1 = async (
 
         // No idea how much of this is necessary but I don't feel like figuring it out
         const res = await fetch(
-            "https://thepurplebubble.slack.com/api/emoji.add",
+            `https://${config.slackWorkspace}.slack.com/api/emoji.add`,
             {
                 credentials: "include",
                 method: "POST",

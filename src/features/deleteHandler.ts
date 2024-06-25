@@ -11,7 +11,7 @@ async function deleteEmoji(emojiName: string, user: string) {
     form.append("name", emojiName);
     form.append("token", process.env.SLACK_BOT_USER_TOKEN!);
     const res = await fetch(
-        "https://thepurplebubble.slack.com/api/emoji.remove",
+        `https://${config.slackWorkspace}.slack.com/api/emoji.remove`,
         {
             method: "POST",
             headers: {
