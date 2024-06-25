@@ -11,8 +11,9 @@ RUN cd /temp/prod && bun install --frozen-lockfile --production && bun run build
 
 # copy production build to release image
 FROM base AS release
-COPY --from=build /temp/emojibot-prod/ .
+COPY --from=build /temp/emojibot-prod/dist/emojibot .
 RUN chown -R bun:bun .
+RUN mkdir tmp && chown -R bun:bun tmp
 
 # run the app
 USER bun
