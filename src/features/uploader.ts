@@ -17,22 +17,14 @@ const feature1 = async (
             payload.subtype !== "file_share" ||
             payload.channel !== config.channel
         ) {
-            // only listen for payloads in #emojibot
-            console.log(
-                "not in channel",
-                payload.channel,
-                config.channel,
-                payload.subtype
-            );
+            // only listen for payloads in #emojibot that have a file attached
             return;
         }
         if (!payload.files || payload.files.length === 0) {
-            console.log("no files");
             context.say({ text: "Make sure to send a file" });
             return;
         }
         if (payload.text.length > 100) {
-            console.log("too long");
             context.say({
                 text: "Please keep your payload under 100 characters.",
             });
@@ -73,9 +65,6 @@ const feature1 = async (
             }
         ).then((res) => res.json() as Promise<{ ok: boolean }>);
 
-        console.log(res);
-
-        // No idea how much of this is necessary but I don't feel like figuring it out
         context.say({
             text: res.ok
                 ? `:${emojiName}: has been added, thanks <@${payload.user}>!`
