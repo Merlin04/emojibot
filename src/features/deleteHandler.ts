@@ -37,7 +37,7 @@ const feature3 = async (
 ) => {
     app.view(
         "delete_view",
-        async () => { },
+        async () => {},
         async ({ context, payload }) => {
             const meta = JSON.parse(payload.view.private_metadata) as {
                 emoji: string;
