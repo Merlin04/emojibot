@@ -17,7 +17,10 @@ async function deleteEmoji(emojiName: string, user: string) {
             },
             body: form,
         }
-    ).then((res) => res.json() as Promise<{ ok: boolean }>);
+    ).then((res) => res.json() as Promise<{ ok: boolean, error?: string }>);
+
+    console.log(res.ok ? `🗑️  User ${user} deleted the ${emojiName} emoji` : `💥 User ${user} failed to delete the ${emojiName} emoji: ${res.error}`);
+
     return res.ok
         ? `:${emojiName}: has been removed, thanks <@${user}>!`
         : `Failed to remove emoji:
@@ -42,6 +45,7 @@ const feature3 = async (
                 thread_ts: string;
                 user: string;
             };
+
             const status = await deleteEmoji(meta.emoji, meta.user);
             await context.client.chat.postMessage({
                 channel: config.channel,

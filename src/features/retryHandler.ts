@@ -15,7 +15,6 @@ async function reuploadEmoji(emojiName: string, emojiURL: string, user: string) 
     }).then((res) => res.blob());
 
     const randomUUID = crypto.randomUUID();
-    console.log("writing to tmp", randomUUID);
     await Bun.write(`tmp/${randomUUID}.png`, imgBuffer);
     const blob = await Bun.file(`tmp/${randomUUID}.png`);
 
@@ -35,6 +34,8 @@ async function reuploadEmoji(emojiName: string, emojiURL: string, user: string) 
     ).then((res) => res.json() as Promise<{ ok: boolean; error?: string }>);
 
     await $`rm tmp/${randomUUID}.png`;
+
+    console.log(res.ok ? `💾 User ${user} readded the ${emojiName} emoji` : `💥 User ${user} failed to readd the ${emojiName} emoji: ${res.error}`);
 
     return res.ok
         ? `:${emojiName}: has been readded, thanks <@${user}>!`
@@ -61,6 +62,7 @@ const feature3 = async (
                 thread_ts: string;
                 user: string;
             };
+
             const status = await reuploadEmoji(meta.emoji, meta.emojiURL, meta.user);
             await context.client.chat.postMessage({
                 channel: config.channel,

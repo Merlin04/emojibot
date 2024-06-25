@@ -44,7 +44,6 @@ const feature1 = async (
         }).then((res) => res.blob());
 
         const randomUUID = crypto.randomUUID();
-        console.log("writing to tmp", randomUUID);
         await Bun.write(`tmp/${randomUUID}.png`, imgBuffer);
         const blob = await Bun.file(`tmp/${randomUUID}.png`);
 
@@ -64,6 +63,8 @@ const feature1 = async (
         ).then((res) => res.json() as Promise<{ ok: boolean; error?: string }>);
 
         await $`rm tmp/${randomUUID}.png`;
+
+        console.log(res.ok ? `💾 User ${payload.user} added the ${emojiName} emoji` : `💥 User ${payload.user} failed to add the ${emojiName} emoji: ${res.error}`);
 
         context.say({
             text: res.ok
