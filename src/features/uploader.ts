@@ -1,76 +1,82 @@
-import { App } from "@slack/bolt";
 import fetch from "node-fetch";
-import * as FormData from "form-data";
 import config from "../config";
-const feature1 = async (app: App) => {
-    app.message("", async ({ message, say }) => {
+import { SlackApp } from "slack-edge";
+import { unlinkSync } from "node:fs";
+import { $ } from "bun";
+
+const feature1 = async (app: SlackApp<{
+    SLACK_SIGNING_SECRET: string;
+    SLACK_BOT_TOKEN: string;
+    SLACK_APP_TOKEN: string;
+}>) => {
+    app.anyMessage(async ({ payload, context }) => {
         if (
-            message.subtype !== "file_share" ||
-            message.channel !== config.channel
-        )
-            // only listen for messages in #emojibot
-            return;
-        if (!message.files || message.files.length === 0) {
-            say("Make sure to send a file");
+            payload.subtype !== "file_share" ||
+            payload.channel !== config.channel
+        ) {
+            // only listen for payloads in #emojibot
+            console.log("not in channel", payload.channel, config.channel, payload.subtype);
             return;
         }
-        if (message.text.length > 100) {
-            say("Please keep your message under 100 characters.");
+        if (!payload.files || payload.files.length === 0) {
+            console.log("no files");
+            context.say({ text: "Make sure to send a file" });
             return;
         }
-        // const res = await app.client.admin.emoji.add({
-        // 	name: message.text.startsWith(":") && message.text.endsWith(":") ? message.text.slice(1, -1) : message.text,
-        // 	url: message.files[0].url_private
-        // });
+        if (payload.text.length > 100) {
+            console.log("too long");
+            context.say({ text: "Please keep your payload under 100 characters." });
+            return;
+        }
+
         const form = new FormData();
-        form.append("mode", "data");
+        form.append("token", process.env.SLACK_BOT_USER_TOKEN!);
+        form.append("mode", "data")
         const emojiName =
-            message.text.startsWith(":") && message.text.endsWith(":")
-                ? message.text.slice(1, -1).toLowerCase()
-                : message.text.toLowerCase();
+            payload.text.startsWith(":") && payload.text.endsWith(":")
+                ? payload.text.slice(1, -1).toLowerCase()
+                : payload.text.toLowerCase();
         form.append("name", emojiName);
-        const imgBuffer = await fetch(message.files[0].url_private, {
+        const imgBuffer = await fetch(payload.files[0].url_private, {
             headers: {
                 Cookie: process.env.SLACK_COOKIE,
             },
         }).then((res) => res.buffer());
-        form.append("image", imgBuffer, {
-            filename: message.files[0].name,
-            contentType: message.files[0].mimetype,
-            knownLength: imgBuffer.length,
-        });
-        form.append("url", message.files[0].url_private);
-        form.append("token", process.env.SLACK_BOT_USER_TOKEN);
-        form.append("_x_reason", "customize-emoji-add");
-        form.append("_x_mode", "online");
-        form.append("_x_sonic", "true");
+
+        const randomUUID = crypto.randomUUID();
+        Bun.write(`tmp/${randomUUID}.png`, imgBuffer);
+        const blob = await Bun.file(`tmp/${randomUUID}.png`);
+        await $`rm tmp/${randomUUID}.png`.quiet()
+
+        form.append("image", blob);
 
         // No idea how much of this is necessary but I don't feel like figuring it out
-        const res = await fetch("https://hackclub.slack.com/api/emoji.add", {
-            // credentials: "include",
+        const res = await fetch("https://thepurplebubble.slack.com/api/emoji.add", {
+            credentials: "include",
             method: "POST",
-            // mode: "cors",
+            body: form,
             headers: {
-                ...config.reqHeaders,
-                "Content-Length": form.getLengthSync().toString(),
-                ...form.getHeaders(),
+                Cookie: `Cookie ${process.env.SLACK_COOKIE}`,
             },
-            body: form.getBuffer(),
         }).then((res) => res.json() as Promise<{ ok: boolean }>);
-        say({
+
+        console.log(res);
+
+        // No idea how much of this is necessary but I don't feel like figuring it out
+        context.say({
             text: res.ok
-                ? `:${emojiName}: has been added, thanks <@${message.user}>!`
+                ? `:${emojiName}: has been added, thanks <@${payload.user}>!`
                 : `Failed to add emoji:
 \`\`\`
 ${JSON.stringify(res, null, 4)}
 \`\`\``,
-            thread_ts: message.ts,
+            thread_ts: payload.ts,
         });
         if (res.ok)
             await app.client.reactions.add({
                 name: emojiName,
-                channel: message.channel,
-                timestamp: message.ts,
+                channel: payload.channel,
+                timestamp: payload.ts,
             });
     });
 };

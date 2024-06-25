@@ -1,21 +1,22 @@
-import { App } from "@slack/bolt";
+import { SlackApp } from "slack-edge";
 import * as features from "./features/index";
 
-const app = new App({
-    signingSecret: process.env.SLACK_SIGNING_SECRET,
-    token: process.env.SLACK_BOT_TOKEN,
-    socketMode: true,
-    appToken: process.env.SLACK_APP_TOKEN,
+const app = new SlackApp({
+    env: {
+        SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET!,
+        SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN!,
+        SLACK_APP_TOKEN: process.env.SLACK_APP_TOKEN!,
+    }
 });
 
-void (async function () {
-    // Start your app
-    await app.start(Number(process.env.PORT) || 3000);
+for (const [feature, handler] of Object.entries(features)) {
+    console.log(`Loading ${feature}`);
+    handler(app);
+}
 
-    console.log(`Emojibot is running!`);
-
-    for (const [feature, handler] of Object.entries(features)) {
-        handler(app);
-        console.log(`Feature "${feature}" has been loaded.`);
-    }
-})();
+export default {
+    port: 3000,
+    async fetch(request) {
+        return await app.run(request);
+    },
+};

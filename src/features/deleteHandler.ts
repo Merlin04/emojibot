@@ -2,6 +2,7 @@ import * as FormData from "form-data";
 import { App } from "@slack/bolt";
 import fetch from "node-fetch";
 import config from "../config";
+import { SlackApp } from "slack-edge";
 
 async function deleteEmoji(emojiName: string, user: string) {
     const form = new FormData();
@@ -9,7 +10,7 @@ async function deleteEmoji(emojiName: string, user: string) {
     form.append("_x_mode", "online");
     form.append("name", emojiName);
     form.append("token", process.env.SLACK_BOT_USER_TOKEN);
-    const res = await fetch("https://hackclub.slack.com/api/emoji.remove", {
+    const res = await fetch("https://thepurplebubble.slack.com/api/emoji.remove", {
         method: "POST",
         headers: {
             ...config.reqHeaders,
@@ -26,7 +27,11 @@ ${JSON.stringify(res, null, 4)}
 \`\`\``;
 }
 
-const feature3 = async (app: App) => {
+const feature3 = async (app: SlackApp<{
+    SLACK_SIGNING_SECRET: string;
+    SLACK_BOT_TOKEN: string;
+    SLACK_APP_TOKEN: string;
+}>) => {
     app.view("delete_view", async ({ client, ack, view }) => {
         await ack();
         const meta = JSON.parse(view.private_metadata) as {
