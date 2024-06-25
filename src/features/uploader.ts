@@ -1,7 +1,5 @@
-import fetch from "node-fetch";
 import config from "../config";
 import { SlackApp } from "slack-edge";
-import { unlinkSync } from "node:fs";
 import { $ } from "bun";
 import { humanizeSlackError } from "../utils/translate";
 
@@ -41,14 +39,14 @@ const feature1 = async (
         form.append("name", emojiName);
         const imgBuffer = await fetch(payload.files[0].url_private, {
             headers: {
-                Cookie: process.env.SLACK_COOKIE,
+                Cookie: process.env.SLACK_COOKIE!,
             },
-        }).then((res) => res.buffer());
+        }).then((res) => res.blob());
 
         const randomUUID = crypto.randomUUID();
-        Bun.write(`tmp/${randomUUID}.png`, imgBuffer);
+        console.log("writing to tmp", randomUUID);
+        await Bun.write(`tmp/${randomUUID}.png`, imgBuffer);
         const blob = await Bun.file(`tmp/${randomUUID}.png`);
-        await $`rm tmp/${randomUUID}.png`.quiet();
 
         form.append("image", blob);
 
@@ -63,7 +61,9 @@ const feature1 = async (
                     Cookie: `Cookie ${process.env.SLACK_COOKIE}`,
                 },
             }
-        ).then((res) => res.json() as Promise<{ ok: boolean }>);
+        ).then((res) => res.json() as Promise<{ ok: boolean, error?: string }>);
+
+        await $`rm tmp/${randomUUID}.png`;
 
         context.say({
             text: res.ok
