@@ -5,18 +5,17 @@
   "license": "MIT",
   "dependencies": {
     "@slack/bolt": "^3.8.1",
-    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "form-data": "^4.0.0",
-    "node-fetch": "2",
-    "slack-edge": "^0.13.0",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.9.5"
+    "slack-edge": "^0.13.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^14.0.14",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
+    "@types/bun": "latest",
     "eslint": "^7.8.1",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.11.0",
@@ -27,8 +26,6 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "7.18.0",
     "eslint-plugin-react-hooks": "1.7.0",
-    "husky": "^4.3.0",
-    "nodemon": "^2.0.4",
     "prettier": "^2.1.1",
     "prettier-eslint": "^11.0.0"
   },

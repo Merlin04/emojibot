@@ -1,8 +1,8 @@
 import { App, View } from "@slack/bolt";
 import config from "../config";
-import { SlackApp } from "slack-edge";
+import { ModalView, SlackApp } from "slack-edge";
 
-function deleteView(emoji: string, thread_ts: string, user: string): View {
+function deleteView(emoji: string, thread_ts: string, user: string): ModalView {
     return {
         callback_id: "delete_view",
         type: "modal",
@@ -36,7 +36,7 @@ function deleteView(emoji: string, thread_ts: string, user: string): View {
     };
 }
 
-function errorView(reason: string): View {
+function errorView(reason: string): ModalView {
     return {
         type: "modal",
         title: {
@@ -69,15 +69,11 @@ const feature2 = async (app: SlackApp<{
     SLACK_BOT_TOKEN: string;
     SLACK_APP_TOKEN: string;
 }>) => {
-    app.shortcut(
-        { callback_id: "delete_emoji", type: "message_action" },
-        async ({ shortcut, ack, client }) => {
-            await ack();
-            console.log(shortcut);
-
-            if (shortcut.channel.id !== config.channel) {
-                await client.views.open({
-                    trigger_id: shortcut.trigger_id,
+    app.shortcut("delete_emoji", async () => { },
+        async ({ context, payload, body }) => {
+            if (context.channelId !== config.channel) {
+                await context.client.views.open({
+                    trigger_id: payload.trigger_id,
                     view: errorView(
                         "This channel doesn't have any emojis managed by emojibot."
                     ),
@@ -86,11 +82,11 @@ const feature2 = async (app: SlackApp<{
             }
 
             if (
-                shortcut.user.id !== shortcut.message.user &&
-                !config.admins.includes(shortcut.user.id)
+                body.user.id !== body.message.user &&
+                !config.admins.includes(body.user.id)
             ) {
-                await client.views.open({
-                    trigger_id: shortcut.trigger_id,
+                await context.client.views.open({
+                    trigger_id: payload.trigger_id,
                     view: errorView(
                         "Only the OP or authorized admins can delete emojis added with emojibot."
                     ),
@@ -99,17 +95,17 @@ const feature2 = async (app: SlackApp<{
             }
 
             const emojiName =
-                shortcut.message.text.startsWith(":") &&
-                    shortcut.message.text.endsWith(":")
-                    ? shortcut.message.text.slice(1, -1)
-                    : shortcut.message.text;
+                body.message.text.startsWith(":") &&
+                    body.message.text.endsWith(":")
+                    ? body.message.text.slice(1, -1)
+                    : body.message.text;
 
-            await client.views.open({
-                trigger_id: shortcut.trigger_id,
+            await context.client.views.open({
+                trigger_id: payload.trigger_id,
                 view: deleteView(
                     emojiName,
-                    shortcut.message_ts,
-                    shortcut.user.id
+                    body.message_ts,
+                    body.user.id
                 ),
             });
         }
