@@ -36,6 +36,8 @@ async function reuploadEmoji(emojiName: string, emojiURL: string, user: string) 
 
     await $`rm tmp/${randomUUID}.png`;
 
+    console.log(res.ok ? `💾 User ${user} readded the ${emojiName} emoji` : `💥 User ${user} failed to readd the ${emojiName} emoji: ${res.error}`);
+
     return res.ok
         ? `:${emojiName}: has been readded, thanks <@${user}>!`
         : `Failed to readd emoji:
@@ -61,6 +63,7 @@ const feature3 = async (
                 thread_ts: string;
                 user: string;
             };
+
             const status = await reuploadEmoji(meta.emoji, meta.emojiURL, meta.user);
             await context.client.chat.postMessage({
                 channel: config.channel,

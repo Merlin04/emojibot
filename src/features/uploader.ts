@@ -65,6 +65,8 @@ const feature1 = async (
 
         await $`rm tmp/${randomUUID}.png`;
 
+        console.log(res.ok ? `💾 User ${payload.user} added the ${emojiName} emoji` : `💥 User ${payload.user} failed to add the ${emojiName} emoji: ${res.error}`);
+
         context.say({
             text: res.ok
                 ? `:${emojiName}: has been added, thanks <@${payload.user}>!`
