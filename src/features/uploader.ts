@@ -3,6 +3,7 @@ import config from "../config";
 import { SlackApp } from "slack-edge";
 import { unlinkSync } from "node:fs";
 import { $ } from "bun";
+import { humanizeSlackError } from "../utils/translate";
 
 const feature1 = async (
     app: SlackApp<{
@@ -80,7 +81,7 @@ const feature1 = async (
                 ? `:${emojiName}: has been added, thanks <@${payload.user}>!`
                 : `Failed to add emoji:
 \`\`\`
-${JSON.stringify(res, null, 4)}
+${humanizeSlackError(res)}
 \`\`\``,
             thread_ts: payload.ts,
         });

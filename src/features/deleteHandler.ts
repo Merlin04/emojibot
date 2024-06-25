@@ -2,6 +2,7 @@ import { App } from "@slack/bolt";
 import fetch from "node-fetch";
 import config from "../config";
 import { SlackApp } from "slack-edge";
+import { humanizeSlackError } from "../utils/translate";
 
 async function deleteEmoji(emojiName: string, user: string) {
     const form = new FormData();
@@ -23,7 +24,7 @@ async function deleteEmoji(emojiName: string, user: string) {
         ? `:${emojiName}: has been removed, thanks <@${user}>!`
         : `Failed to remove emoji:
 \`\`\`
-${JSON.stringify(res, null, 4)}
+${humanizeSlackError(res)}
 \`\`\``;
 }
 
@@ -36,7 +37,7 @@ const feature3 = async (
 ) => {
     app.view(
         "delete_view",
-        async () => {},
+        async () => { },
         async ({ context, payload }) => {
             const meta = JSON.parse(payload.view.private_metadata) as {
                 emoji: string;
