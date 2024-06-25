@@ -1,7 +1,7 @@
 const config = {
-    channel: "C078WHPFMJT",
-    slackWorkspace: "thepurplebubble",
-    admins: ["U079PPPT189"],
+    channel: process.env.SLACK_CHANNEL!,
+    slackWorkspace: process.env.SLACK_WORKSPACE!,
+    admins: process.env.ADMINS?.split(",") ?? [],
 };
 
 export default config;
