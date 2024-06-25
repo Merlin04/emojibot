@@ -17,5 +17,5 @@ RUN mkdir tmp && chown -R bun:bun tmp
 
 # run the app
 USER bun
-EXPOSE 4221/tcp
+EXPOSE 3000/tcp
 ENTRYPOINT [ "./emojibot" ]
