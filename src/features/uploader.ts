@@ -44,7 +44,6 @@ const feature1 = async (
         }).then((res) => res.blob());
 
         const randomUUID = crypto.randomUUID();
-        console.log("writing to tmp", randomUUID);
         await Bun.write(`tmp/${randomUUID}.png`, imgBuffer);
         const blob = await Bun.file(`tmp/${randomUUID}.png`);
 

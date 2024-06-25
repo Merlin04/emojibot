@@ -118,8 +118,6 @@ const feature2 = async (
                     ? body.message.text.slice(1, -1)
                     : body.message.text;
 
-            console.log(body.message);
-
             await context.client.views.open({
                 trigger_id: payload.trigger_id,
                 view: retryView(emojiName, body.message.files[0].url_private!, body.message_ts, body.user.id),
