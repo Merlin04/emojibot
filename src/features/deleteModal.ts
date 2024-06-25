@@ -1,4 +1,3 @@
-import { App, View } from "@slack/bolt";
 import config from "../config";
 import { ModalView, SlackApp } from "slack-edge";
 
@@ -73,7 +72,7 @@ const feature2 = async (
 ) => {
     app.shortcut(
         "delete_emoji",
-        async () => {},
+        async () => { },
         async ({ context, payload, body }) => {
             if (context.channelId !== config.channel) {
                 await context.client.views.open({
@@ -108,7 +107,7 @@ const feature2 = async (
 
             const emojiName =
                 body.message.text.startsWith(":") &&
-                body.message.text.endsWith(":")
+                    body.message.text.endsWith(":")
                     ? body.message.text.slice(1, -1)
                     : body.message.text;
 

@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import config from "../config";
 import { SlackApp } from "slack-edge";
 import { humanizeSlackError } from "../utils/translate";

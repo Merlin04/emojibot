@@ -1,5 +1,3 @@
-import { App } from "@slack/bolt";
-import fetch from "node-fetch";
 import config from "../config";
 import { SlackApp } from "slack-edge";
 import { humanizeSlackError } from "../utils/translate";
@@ -37,7 +35,7 @@ const feature3 = async (
 ) => {
     app.view(
         "delete_view",
-        async () => {},
+        async () => { },
         async ({ context, payload }) => {
             const meta = JSON.parse(payload.view.private_metadata) as {
                 emoji: string;
