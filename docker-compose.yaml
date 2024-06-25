@@ -1,0 +1,19 @@
+name: emojibot
+services:
+    server:
+        ports:
+            - 3000:3000
+        image: kcoderhtml/emojibot:latest
+        restart: unless-stopped
+        environment:
+            - SLACK_SIGNING_SECRET
+            - SLACK_BOT_TOKEN=xoxb-1234567890-1234567890-1234567890
+            - SLACK_APP_TOKEN=xapp-1234567890-1234567890-1234567890
+            - SLACK_BOT_USER_TOKEN=xoxc-1234567890-1234567890-1234567890-1234567890
+            - SLACK_COOKIE="b=..." # this is the cookie from the browser
+            - SLACK_WORKSPACE=yourworkspace # e.g. yourworkspace.slack.com
+            - SLACK_CHANNEL=your-channelid
+            - ADMINS=admin1,admin2 # comma separated list of slack user ids; workspace admins are automatically added
+        init: true
+        volumes:
+            - ./data:/usr/src/app/data
