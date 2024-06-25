@@ -61,7 +61,7 @@ const feature1 = async (
                     Cookie: `Cookie ${process.env.SLACK_COOKIE}`,
                 },
             }
-        ).then((res) => res.json() as Promise<{ ok: boolean, error?: string }>);
+        ).then((res) => res.json() as Promise<{ ok: boolean; error?: string }>);
 
         await $`rm tmp/${randomUUID}.png`;
 
