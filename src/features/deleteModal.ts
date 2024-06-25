@@ -64,12 +64,16 @@ function errorView(reason: string): ModalView {
     };
 }
 
-const feature2 = async (app: SlackApp<{
-    SLACK_SIGNING_SECRET: string;
-    SLACK_BOT_TOKEN: string;
-    SLACK_APP_TOKEN: string;
-}>) => {
-    app.shortcut("delete_emoji", async () => { },
+const feature2 = async (
+    app: SlackApp<{
+        SLACK_SIGNING_SECRET: string;
+        SLACK_BOT_TOKEN: string;
+        SLACK_APP_TOKEN: string;
+    }>
+) => {
+    app.shortcut(
+        "delete_emoji",
+        async () => {},
         async ({ context, payload, body }) => {
             if (context.channelId !== config.channel) {
                 await context.client.views.open({
@@ -96,17 +100,13 @@ const feature2 = async (app: SlackApp<{
 
             const emojiName =
                 body.message.text.startsWith(":") &&
-                    body.message.text.endsWith(":")
+                body.message.text.endsWith(":")
                     ? body.message.text.slice(1, -1)
                     : body.message.text;
 
             await context.client.views.open({
                 trigger_id: payload.trigger_id,
-                view: deleteView(
-                    emojiName,
-                    body.message_ts,
-                    body.user.id
-                ),
+                view: deleteView(emojiName, body.message_ts, body.user.id),
             });
         }
     );
