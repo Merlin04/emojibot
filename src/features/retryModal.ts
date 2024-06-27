@@ -1,13 +1,13 @@
 import config from "../config";
 import { ModalView, SlackApp } from "slack-edge";
 
-function deleteView(emoji: string, thread_ts: string, user: string): ModalView {
+function retryView(emoji: string, emojiURL: string, thread_ts: string, user: string): ModalView {
     return {
-        callback_id: "delete_view",
+        callback_id: "retry_view",
         type: "modal",
         title: {
             type: "plain_text",
-            text: "Confirm Deletion",
+            text: "Confirm Retry",
         },
         submit: {
             type: "plain_text",
@@ -19,18 +19,25 @@ function deleteView(emoji: string, thread_ts: string, user: string): ModalView {
             text: "Cancel",
             emoji: true,
         },
-        private_metadata: JSON.stringify({ emoji, thread_ts, user }),
+        private_metadata: JSON.stringify({ emoji, emojiURL, thread_ts, user }),
         blocks: [
             {
                 type: "context",
                 elements: [
                     {
                         type: "plain_text",
-                        text: `Delete :${emoji}:?`,
+                        text: `Are you sure you want to retry uploading :${emoji}:? This will use the same file that was originally uploaded.`,
                         emoji: true,
-                    },
+                    }
                 ],
             },
+            {
+                type: "image",
+                slack_file: {
+                    url: emojiURL,
+                },
+                alt_text: "uploaded emoji file"
+            }
         ],
     };
 }
@@ -71,7 +78,7 @@ const feature2 = async (
     }>
 ) => {
     app.shortcut(
-        "delete_emoji",
+        "retry_emoji",
         async () => { },
         async ({ context, payload, body }) => {
             if (context.channelId !== config.channel) {
@@ -99,7 +106,7 @@ const feature2 = async (
                 await context.client.views.open({
                     trigger_id: payload.trigger_id,
                     view: errorView(
-                        "Only the OP or authorized admins can delete emojis added with emojibot."
+                        "Only the OP or authorized admins can retry emojis added with emojibot."
                     ),
                 });
                 return;
@@ -113,7 +120,7 @@ const feature2 = async (
 
             await context.client.views.open({
                 trigger_id: payload.trigger_id,
-                view: deleteView(emojiName, body.message_ts, body.user.id),
+                view: retryView(emojiName, body.message.files[0].url_private!, body.message_ts, body.user.id),
             });
         }
     );
