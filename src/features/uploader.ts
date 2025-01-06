@@ -1,6 +1,6 @@
-import config from "../config";
-import { SlackApp } from "slack-edge";
+import type { SlackApp } from "slack-edge";
 import { $ } from "bun";
+import config from "../config";
 import { humanizeSlackError } from "../utils/translate";
 
 const feature1 = async (
@@ -18,13 +18,27 @@ const feature1 = async (
             // only listen for payloads in #emojibot that have a file attached
             return;
         }
+        if (payload.text.split(" ").length > 1) {
+            context.client.chat.postEphemeral({
+                channel: payload.channel,
+                user: payload.user,
+                text: "Please only send one emoji at a time",
+            });
+            return;
+        }
         if (!payload.files || payload.files.length === 0) {
-            context.say({ text: "Make sure to send a file" });
+            context.client.chat.postEphemeral({
+                text: "Please attach an image to your message",
+                channel: payload.channel,
+                user: payload.user,
+            });
             return;
         }
         if (payload.text.length > 100) {
-            context.say({
-                text: "Please keep your payload under 100 characters.",
+            context.client.chat.postEphemeral({
+                text: "Please keep your name under 100 characters",
+                channel: payload.channel,
+                user: payload.user,
             });
             return;
         }
@@ -45,7 +59,7 @@ const feature1 = async (
 
         const randomUUID = crypto.randomUUID();
         await Bun.write(`tmp/${randomUUID}.png`, imgBuffer);
-        const blob = await Bun.file(`tmp/${randomUUID}.png`);
+        const blob = Bun.file(`tmp/${randomUUID}.png`);
 
         form.append("image", blob);
 
@@ -64,7 +78,11 @@ const feature1 = async (
 
         await $`rm tmp/${randomUUID}.png`;
 
-        console.log(res.ok ? `💾 User ${payload.user} added the ${emojiName} emoji` : `💥 User ${payload.user} failed to add the ${emojiName} emoji: ${res.error}`);
+        console.log(
+            res.ok
+                ? `💾 User ${payload.user} added the ${emojiName} emoji`
+                : `💥 User ${payload.user} failed to add the ${emojiName} emoji: ${res.error}`
+        );
 
         context.say({
             text: res.ok
