@@ -1,5 +1,10 @@
 # Emojibot <!-- omit in toc -->
 
+> [!Note]
+> this is currently being used daily in 3 different slack workspaces so never fear if the code hasn't been updated in a bit; that just means its working flawlessly ^-^
+
+#
+
 - [Usage](#usage)
   - [Environment variables:](#environment-variables)
     - [Getting the slack user token and cookie](#getting-the-slack-user-token-and-cookie)
